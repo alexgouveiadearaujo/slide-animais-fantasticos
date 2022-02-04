@@ -1,0 +1,31 @@
+body{
+    margin: 0;
+}
+
+ul{
+    padding: 0px;
+    margin: 0px;
+    list-style: none;
+}
+
+img{
+    display: block;
+    max-width: 100%;
+    /* max-width: 900px; */
+    /* height: 500px; */
+}
+
+.slide{
+ display: flex;
+}
+
+.slide li{
+    flex-shrink: 0;
+    max-width: 800px;
+    width: 80vw;
+    margin: 0 20px;
+}
+
+.slide-wrapper{
+    overflow: hidden;
+}
