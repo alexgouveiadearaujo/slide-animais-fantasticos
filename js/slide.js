@@ -1,43 +1,56 @@
 export default class Slide {
-    constructor(slide , wrapper){
-        this.slide = document.querySelector(slide)
-        this.wrapper = document.querySelector(wrapper)
-    }
+  constructor(slide, wrapper) {
+    this.slide = document.querySelector(slide);
+    this.wrapper = document.querySelector(wrapper);
+    this.dist = {
+      finalPosition: 0,
+      startX: 0,
+      movement: 0,
+    };
+  }
 
-    onStart(e){
-        e.preventDefault();
-        // console.log(e);
-        console.log('mdown');
-        this.wrapper.addEventListener('mousemove' , this.onMove)
+  moveSlide(distX){
+      this.dist.movePosition = distX;
+    this.slide.style.transform = `translate3d(${distX}px,0,0)`
+  }
 
-    }
+  updatePosition(clientX){
+    this.dist.movement = (this.dist.startX - clientX) * 1.6
+   return this.dist.finalPosition - this.dist.movement;
+  }
 
-    onMove(e){
-        console.log('moveu');
-    }
+  onStart(e) {
+    e.preventDefault();
+    this.dist.startX = e.clientX
+    this.wrapper.addEventListener("mousemove", this.onMove);
+    console.log(this.dist.startX);
+  }
 
-    onEnd(e){
-        console.log('acabou');
-        this.wrapper.removeEventListener('mousemove' , this.onMove)
+  onMove(e) {
+    const finalPosition = this.updatePosition(e.clientX)
+    this.moveSlide(finalPosition)
+  }
 
-    }
+  onEnd(e) {
+    // console.log("acabou");
+    this.wrapper.removeEventListener("mousemove", this.onMove);
+    this.dist.finalPosition = this.dist.movePosition
+  }
 
-    addSlideEvent(){
-        this.wrapper.addEventListener('mousedown' , this.onStart)
-        this.wrapper.addEventListener('mouseup' , this.onEnd)
-    }
+  addSlideEvent() {
+    this.wrapper.addEventListener("mousedown", this.onStart);
+    this.wrapper.addEventListener("mouseup", this.onEnd);
+  }
 
-    bindEvent(){
-        this.onStart = this.onStart.bind(this)
-        this.onMove = this.onMove.bind(this)
-        this.onEnd = this.onEnd.bind(this)
-    }
+  bindEvent() {
+    this.onStart = this.onStart.bind(this);
+    this.onMove = this.onMove.bind(this);
+    this.onEnd = this.onEnd.bind(this);
+  }
 
-    init(){
-        this.bindEvent()
-        this.addSlideEvent();
-        return this
-    }
-
-
+  init() {
+    this.bindEvent();
+    this.addSlideEvent();
+    return this;
+  }
 }
