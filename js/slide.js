@@ -9,37 +9,46 @@ export default class Slide {
     };
   }
 
-  moveSlide(distX){
-      this.dist.movePosition = distX;
-    this.slide.style.transform = `translate3d(${distX}px,0,0)`
+  moveSlide(distX) {
+    this.dist.movePosition = distX;
+    this.slide.style.transform = `translate3d(${distX}px,0,0)`;
   }
 
-  updatePosition(clientX){
-    this.dist.movement = (this.dist.startX - clientX) * 1.6
-   return this.dist.finalPosition - this.dist.movement;
+  updatePosition(clientX) {
+    this.dist.movement = (this.dist.startX - clientX) * 1.6;
+    return this.dist.finalPosition - this.dist.movement;
   }
 
   onStart(e) {
-    e.preventDefault();
-    this.dist.startX = e.clientX
-    this.wrapper.addEventListener("mousemove", this.onMove);
-    console.log(this.dist.startX);
+    let movetype;
+    if (e.type === "mousedown") {
+      e.preventDefault();
+      this.dist.startX = e.clientX;
+      movetype = "mousemove";
+    } else {
+      this.dist.startX = e.changedTouches[0].clientX;
+      movetype = "touchmove";
+    }
+    this.wrapper.addEventListener(movetype, this.onMove);
   }
 
   onMove(e) {
-    const finalPosition = this.updatePosition(e.clientX)
-    this.moveSlide(finalPosition)
+    const pointerPosition = e.type === "mousemove" ? e.clientX : e.changedTouches[0].clientX;
+    const finalPosition = this.updatePosition(pointerPosition);
+    this.moveSlide(finalPosition);
   }
 
   onEnd(e) {
-    // console.log("acabou");
-    this.wrapper.removeEventListener("mousemove", this.onMove);
-    this.dist.finalPosition = this.dist.movePosition
+    const movetype = e.type === "mouseup" ? "mousemove" : "touchmove";
+    this.wrapper.removeEventListener(movetype, this.onMove);
+    this.dist.finalPosition = this.dist.movePosition;
   }
 
-  addSlideEvent() {
+  addSlideEvents() {
     this.wrapper.addEventListener("mousedown", this.onStart);
+    this.wrapper.addEventListener("touchstart", this.onStart);
     this.wrapper.addEventListener("mouseup", this.onEnd);
+    this.wrapper.addEventListener("touchend", this.onEnd);
   }
 
   bindEvent() {
@@ -50,7 +59,7 @@ export default class Slide {
 
   init() {
     this.bindEvent();
-    this.addSlideEvent();
+    this.addSlideEvents();
     return this;
   }
 }
